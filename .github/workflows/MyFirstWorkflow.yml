@@ -3,8 +3,31 @@ name: My First Workflow
 on:
   push:
     branches: 
-      - main
+      - 'main'
+      - 'release/**'
+    paths:
+      - 'doc/**'
   workflow_dispatch:
+    inputs:
+      homedrive:
+        description: 'The home drive on the machine'
+        required: true
+      logLevel:
+        description: 'Log level'
+        default: 'warning'
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+      tag:
+          description: 'Apply tag after successful test run'
+          required: true
+          type: boolean
+      environmant:
+        description: 'Environment to run tests against'
+        type: environment
+        required: true
 
 jobs:
   MyFirstJob:
@@ -21,3 +44,9 @@ jobs:
           files:
           "
           tree
+      
+      - name: Workflow Inputs
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          echo "Homedrive: ${{ inputs.homedrive }}"
+          echo "Tag source: ${{ inputs.tag }}" 
